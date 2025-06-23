@@ -1,23 +1,64 @@
+"use client";
+
+import { PencilLine, Sparkles, ClipboardList, Send } from "lucide-react";
+
 export default function HowItWorksSection() {
+  const steps = [
+    {
+      icon: <PencilLine className="w-6 h-6 text-indigo-600" />,
+      title: "Describe Your Email",
+      description:
+        "Share the purpose — like job inquiry, follow-up, or a personal message.",
+    },
+    {
+      icon: <Sparkles className="w-6 h-6 text-indigo-600" />,
+      title: "AI Generates It Instantly",
+      description:
+        "Our Gemini-powered AI crafts a professional email tailored to your prompt.",
+    },
+    {
+      icon: <ClipboardList className="w-6 h-6 text-indigo-600" />,
+      title: "Review & Edit",
+      description:
+        "Easily review, edit, and save the email in your dashboard before sending.",
+    },
+    {
+      icon: <Send className="w-6 h-6 text-indigo-600" />,
+      title: "Send or Refine",
+      description:
+        "Once satisfied, copy or send the email. You’re always in control.",
+    },
+  ];
+
   return (
-    <section className="py-20 px-6 bg-white">
-      <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl font-bold text-indigo-700 mb-6">
+    <section className="py-20 px-6 bg-white border-t border-gray-100">
+      <div className="max-w-6xl mx-auto text-center">
+        <h2 className="text-4xl font-bold text-indigo-700 mb-4">
           How It Works
         </h2>
-        <ol className="space-y-6 text-left max-w-2xl mx-auto text-gray-700 list-decimal list-inside">
-          <li>
-            📝 Describe your email’s purpose (e.g., job inquiry, sales pitch,
-            follow-up).
-          </li>
-          <li>
-            ⚙️ Our AI (powered by Google Gemini) generates a well-crafted draft.
-          </li>
-          <li>
-            📋 Copy, save, or modify the email in your personal dashboard.
-          </li>
-          <li>✅ Done! Use it directly or refine it further.</li>
-        </ol>
+        <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-12">
+          Write professional emails effortlessly with AI. Here’s how simple it
+          is.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
+          {steps.map((step, index) => (
+            <div
+              key={index}
+              className="flex items-start gap-4 p-6 bg-indigo-50 rounded-xl shadow hover:shadow-md transition"
+            >
+              <div className="flex-shrink-0 p-3 bg-white rounded-full shadow-md">
+                {step.icon}
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-indigo-800 mb-1">
+                  {step.title}
+                </h3>
+                <p className="text-gray-700 text-sm">{step.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
