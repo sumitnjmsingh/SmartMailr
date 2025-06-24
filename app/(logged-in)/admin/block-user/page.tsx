@@ -74,7 +74,7 @@ export default function BlockUserPage() {
   };
 
   return (
-    <div className="bg-white">
+    <div className="min-h-screen bg-white">
       <header className="px-6 py-2 flex justify-between items-center shadow bg-white gap-2">
         <Link href="/">
           <h1 className="text-xl font-bold text-indigo-600">SmartEmailr</h1>
