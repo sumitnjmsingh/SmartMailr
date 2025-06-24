@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { Mail, ChevronDown, Loader2 } from "lucide-react";
+import { Mail, ChevronDown, Loader2, Menu, X } from "lucide-react";
 import {
   SignInButton,
   SignOutButton,
@@ -30,6 +30,7 @@ export default function DashboardPage() {
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [isBlocked, setIsBlocked] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   // Fetch all Clerk users for dropdown
   useEffect(() => {
@@ -136,11 +137,27 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-50 to-white text-gray-800">
-      <header className="px-6 py-2 flex justify-between items-center shadow bg-white gap-2">
+      <header className="px-6 py-3 flex justify-between items-center shadow bg-white relative z-50">
         <Link href="/">
           <h1 className="text-xl font-bold text-indigo-600">SmartEmailr</h1>
         </Link>
-        <nav className="space-x-4 flex items-center">
+
+        {/* Mobile Menu Toggle */}
+        <div className="lg:hidden">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="text-indigo-600 hover:text-indigo-800"
+          >
+            {menuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
+        </div>
+
+        {/* Desktop Menu */}
+        <nav className="hidden lg:flex space-x-4 items-center">
           <SignedOut>
             <SignInButton>
               <button className="text-indigo-600 hover:underline">
@@ -148,6 +165,7 @@ export default function DashboardPage() {
               </button>
             </SignInButton>
           </SignedOut>
+
           <SignedIn>
             <Link href="/users" className="text-indigo-600">
               Users
@@ -155,13 +173,46 @@ export default function DashboardPage() {
             <Link href="/admin/block-user" className="text-indigo-600">
               BUser
             </Link>
+            <Link href="/emails" className="text-indigo-600">
+              Emails
+            </Link>
             <SignOutButton>
-              <button className="ml-4 text-sm bg-purple-600 p-2 rounded-lg text-white hover:cursor-pointer">
+              <button className="text-sm bg-purple-600 p-2 rounded-lg text-white">
                 Sign Out
               </button>
             </SignOutButton>
           </SignedIn>
         </nav>
+
+        {/* Mobile Dropdown Menu */}
+        {menuOpen && (
+          <div className="absolute top-full right-1 mt-2 w-36 bg-white border border-gray-200 rounded shadow-lg p-4 space-y-1 text-center lg:hidden">
+            <SignedOut>
+              <SignInButton>
+                <button className="text-indigo-600 hover:underline w-full text-left">
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
+
+            <SignedIn>
+              <Link href="/users" className="block text-indigo-600">
+                Users
+              </Link>
+              <Link href="/admin/block-user" className="block text-indigo-600">
+                BUser
+              </Link>
+              <Link href="/emails" className="text-indigo-600">
+                Emails
+              </Link>
+              <SignOutButton>
+                <button className="text-sm bg-purple-600 px-3 py-1 rounded-lg text-white w-full text-left">
+                  Sign Out
+                </button>
+              </SignOutButton>
+            </SignedIn>
+          </div>
+        )}
       </header>
 
       <section className="text-center py-16 px-6 max-w-3xl mx-auto">
