@@ -74,7 +74,7 @@ export default function BlockUserPage() {
   };
 
   return (
-    <>
+    <div className="bg-white">
       <header className="px-6 py-2 flex justify-between items-center shadow bg-white gap-2">
         <Link href="/">
           <h1 className="text-xl font-bold text-indigo-600">SmartEmailr</h1>
@@ -135,16 +135,25 @@ export default function BlockUserPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <label className="text-sm font-medium text-gray-700">Action:</label>
-            <select
-              value={block ? "block" : "unblock"}
-              onChange={(e) => setBlock(e.target.value === "block")}
-              className="border border-gray-300 rounded px-3 py-1 focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="block">Block</option>
-              <option value="unblock">Unblock</option>
-            </select>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Action
+            </label>
+            <div className="relative">
+              <select
+                value={block ? "block" : "unblock"}
+                onChange={(e) => setBlock(e.target.value === "block")}
+                className="appearance-none w-full p-3 pr-10 border border-gray-300 rounded-lg shadow-sm text-gray-700 bg-white transition-all duration-200 
+        focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 hover:border-indigo-400"
+              >
+                <option value="block">Block</option>
+                <option value="unblock">Unblock</option>
+              </select>
+
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+                <ChevronDown size={18} />
+              </div>
+            </div>
           </div>
 
           <button
@@ -154,8 +163,8 @@ export default function BlockUserPage() {
               loading
                 ? "bg-gray-400 cursor-not-allowed"
                 : block
-                  ? "bg-red-600 hover:bg-red-700"
-                  : "bg-green-600 hover:bg-green-700"
+                  ? "bg-red-600 hover:bg-red-700 hover:cursor-pointer"
+                  : "bg-green-600 hover:bg-green-700 hover:cursor-pointer"
             } transition`}
           >
             {loading ? (
@@ -170,6 +179,6 @@ export default function BlockUserPage() {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }

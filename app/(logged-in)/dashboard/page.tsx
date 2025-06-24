@@ -24,7 +24,8 @@ export default function DashboardPage() {
   const [prompt, setPrompt] = useState("");
   const [subject, setSubject] = useState("");
   const [response, setResponse] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [GenerateEmailLoading, setGenerateEmailLoading] = useState(false);
+  const [SendEmailLoading, setSendEmailLoading] = useState(false);
   const [users, setUsers] = useState<ClerkUser[]>([]);
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [isBlocked, setIsBlocked] = useState(false);
@@ -79,27 +80,66 @@ export default function DashboardPage() {
     if (!prompt.trim()) return toast.error("Please enter a prompt.");
     if (!selectedEmail) return toast.error("Please select a recipient email.");
 
-    setLoading(true);
+    setGenerateEmailLoading(true);
     try {
       const res = await fetch("/api/generate-email", {
         method: "POST",
-        body: JSON.stringify({ prompt, subject, email: selectedEmail }),
+        body: JSON.stringify({ prompt, subject }),
         headers: { "Content-Type": "application/json" },
       });
       const data = await res.json();
       setResponse(data.body);
+      setSubject(data.subject || subject);
     } catch (error) {
       console.error("Failed to generate email:", error);
       toast.error("Something went wrong. Please try again.");
     } finally {
-      setLoading(false);
+      setGenerateEmailLoading(false);
+    }
+  };
+
+  const handleSend = async () => {
+    if (!subject.trim() || !selectedEmail || !response.trim()) {
+      return toast.error("Fill all fields before sending.");
+    }
+
+    setSendEmailLoading(true);
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: selectedEmail,
+          subject,
+          body: response,
+        }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        toast.error(error.error || "Failed to send");
+        return;
+      }
+
+      toast.success("Email sent!");
+      setPrompt("");
+      setSubject("");
+      setResponse("");
+      setSelectedEmail("");
+    } catch (error) {
+      console.error("Failed to send email:", error);
+      toast.error("Server error");
+    } finally {
+      setSendEmailLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-indigo-50 to-white text-gray-800">
       <header className="px-6 py-2 flex justify-between items-center shadow bg-white gap-2">
-        <Link href="/"><h1 className="text-xl font-bold text-indigo-600">SmartEmailr</h1></Link>
+        <Link href="/">
+          <h1 className="text-xl font-bold text-indigo-600">SmartEmailr</h1>
+        </Link>
         <nav className="space-x-4 flex items-center">
           <SignedOut>
             <SignInButton>
@@ -193,14 +233,14 @@ export default function DashboardPage() {
 
                 <button
                   onClick={handleGenerate}
-                  disabled={loading || (isBlocked && !isAdmin)}
+                  disabled={GenerateEmailLoading || (isBlocked && !isAdmin)}
                   className={`flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg shadow hover:cursor-pointer transition ${
-                    loading || (isBlocked && !isAdmin)
+                    GenerateEmailLoading || (isBlocked && !isAdmin)
                       ? "opacity-60 cursor-not-allowed"
                       : "hover:bg-indigo-700"
                   }`}
                 >
-                  {loading ? (
+                  {GenerateEmailLoading ? (
                     <>
                       <Loader2 className="animate-spin w-5 h-5" />
                       Generating...
@@ -211,11 +251,31 @@ export default function DashboardPage() {
                 </button>
 
                 {response && (
-                  <div className="mt-6 bg-gray-100 p-4 rounded-lg text-left whitespace-pre-wrap">
-                    <h3 className="font-semibold text-gray-700 mb-2">
-                      Generated Email:
-                    </h3>
-                    {response}
+                  <div className="mt-6">
+                    <label className="text-sm font-medium text-gray-700 mb-1 block">
+                      Edit Email Body
+                    </label>
+                    <textarea
+                      className="w-full p-3 border border-gray-300 bg-white shadow rounded-lg"
+                      rows={8}
+                      value={response}
+                      onChange={(e) => setResponse(e.target.value)}
+                    />
+
+                    <button
+                      onClick={handleSend}
+                      disabled={SendEmailLoading}
+                      className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition disabled:opacity-60 hover:cursor-pointer"
+                    >
+                      {SendEmailLoading ? (
+                        <span className="flex items-center gap-2">
+                          <Loader2 className="animate-spin w-4 h-4" />
+                          Sending...
+                        </span>
+                      ) : (
+                        " 📩 Send Email"
+                      )}
+                    </button>
                   </div>
                 )}
               </>
